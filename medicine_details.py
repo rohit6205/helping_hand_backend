@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, flash, redirect, url_for
 from mysql.connector import connect, Error
+from flask_cors import CORS, cross_origin
 
 STRING_FAIL = 'fail'
 STRING_SUCCESS = 'success'
@@ -25,18 +26,22 @@ def get_serialize_data(fields, results):
         data_dict = {}
         for i in range(len(column_list)):
             data_dict[column_list[i]] = row[i]
+        data_dict['phoneNumber'] = data_dict['phoneNumber'].split('/')
         jsonData_list.append(data_dict)
     return jsonData_list
 
 
 app = Flask(__name__)
-#app.config['SECRET_KEY'] = 'hardsecretkey'
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/")
+@cross_origin()
 def hello():
     return "Hello, Flask!"
 
 @app.route('/api/distributors', methods=['GET'])
+@cross_origin()
 def get_all_medicine():
 
     medicine = request.args.get('medicine')
@@ -60,7 +65,8 @@ def get_all_medicine():
 
     json_data_list = get_serialize_data(fields_list, medicine_details)
 
-    return jsonify(meta=STRING_SUCCESS, response=json_data_list)
+    response = jsonify(meta=STRING_SUCCESS, response=json_data_list)
+    return response
 
 
 if __name__ == '__main__' :
