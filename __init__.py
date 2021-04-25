@@ -130,7 +130,7 @@ def save_feedback():
             get_query += str(tuple(feedback_value))
             print(get_query)
             cursor.execute(get_query)
-            else:
+        else:
             conn.commit()
             cursor.close()
             conn.close()
